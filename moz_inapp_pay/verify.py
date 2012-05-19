@@ -29,11 +29,12 @@ def verify_jwt(signed_request, key, secret,
         app_req = jwt.decode(signed_request, verify=False)
     except jwt.DecodeError, exc:
         _re_raise_as(InvalidJWT, 'Invalid payment JWT: %s' % exc)
-    try:
-        app_req = json.loads(app_req)
-    except ValueError, exc:
-        _re_raise_as(InvalidJWT,
-                     'Invalid JSON for payment JWT: %s' % exc)
+    if not isinstance(app_req, dict):
+        try:
+            app_req = json.loads(app_req)
+        except ValueError, exc:
+            _re_raise_as(InvalidJWT,
+                         'Invalid JSON for payment JWT: %s' % exc)
 
     # Check JWT issuer.
     issuer = app_req.get('iss', None)
