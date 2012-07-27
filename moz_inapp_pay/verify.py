@@ -1,3 +1,9 @@
+"""
+Helper functions to verify `JWT`_ (JSON Web Token) objects.
+Some are specific to Mozilla Marketplace payments, others are more generic.
+
+.. _`JWT`: http://openid.net/specs/draft-jones-json-web-token-07.html
+"""
 import calendar
 from datetime import datetime
 import json
@@ -19,9 +25,8 @@ def verify_jwt(signed_request, key, secret, validators=[],
     Verifies a postback/chargeback JWT.
 
     Returns the trusted JSON data from the original request.
-    JWT spec: http://openid.net/specs/draft-jones-json-web-token-07.html
-
-    When there's an error, an exception derived from InvalidJWT
+    When there's an error, an exception derived from
+    :class:`moz_inapp_pay.exc.InvalidJWT`
     will be raised.
 
     This is an all-in-one function that does all verification you'd
@@ -45,7 +50,8 @@ def verify_audience(app_req, expected_aud, issuer=None):
     Verify JWT aud (audience)
 
     When aud is not found or doesn't match expected_aud,
-    InvalidJWT is raised.
+    :class:`moz_inapp_pay.exc.InvalidJWT`
+    is raised.
 
     The valid audience is returned
     """
@@ -67,14 +73,18 @@ def verify_claims(app_req, issuer=None):
     All times must be UTC unix timestamps.
 
     These claims will be verified:
+
     - iat: issued at time. If JWT was issued more than an hour ago it is
       rejected.
     - exp: expiration time.
     - nbf: not before time. This is padded with 5 minutes for clock skew.
       This field is *optional*, leaving it out is not an error.
 
-    All exceptions are derived from InvalidJWT.
-    For expirations a RequestExpired exception will be raised.
+    All exceptions are derived from
+    :class:`moz_inapp_pay.exc.InvalidJWT`.
+    For expirations a
+    :class:`moz_inapp_pay.exc.RequestExpired`
+    exception will be raised.
     """
     if not issuer:
         issuer = _get_issuer(app_req=app_req)

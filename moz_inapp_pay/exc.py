@@ -1,3 +1,6 @@
+"""
+Exceptions that might be raised during JWT processing.
+"""
 __all__ = ['InvalidJWT', 'RequestExpired']
 
 
