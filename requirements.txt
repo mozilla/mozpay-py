@@ -1,0 +1,2 @@
+PyJWT
+M2Crypto>=0.2.0
