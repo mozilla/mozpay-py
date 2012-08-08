@@ -151,6 +151,25 @@ Exceptions
 .. automodule:: moz_inapp_pay.exc
     :members:
 
+Source Code and Bug Tracker
+===========================
+
+The source code is hosted on https://github.com/kumar303/moz_inapp_pay
+and you can submit pull requests and bugs over there.
+
+Developers
+==========
+
+Hello!
+To work on this module, check out the source from git and be sure
+you have the tox_ tool. To run the test suite, cd into the root and type::
+
+    tox
+
+This will run all tests in a virtualenv using the supported versions of Python.
+
+.. _tox: http://tox.testrun.org/latest/
+
 Indices and tables
 ==================
 
