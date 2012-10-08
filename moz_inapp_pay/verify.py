@@ -15,7 +15,7 @@ import jwt
 from .exc import InvalidJWT, RequestExpired
 
 
-def verify_jwt(signed_request, key, secret, validators=[],
+def verify_jwt(signed_request, expected_aud, secret, validators=[],
                required_keys=('request.price',
                               'request.currency',
                               'request.name',
@@ -32,11 +32,32 @@ def verify_jwt(signed_request, key, secret, validators=[],
     This is an all-in-one function that does all verification you'd
     need. There are some low-level functions you can use to just
     verify certain parts of a JWT.
+
+    Arguments:
+
+    **signed_request**
+        JWT byte string.
+
+    **expected_aud**
+        The expected value for the aud (audience) of the JWT.
+        See :func:`moz_inapp_pay.verify.verify_audience`.
+
+    **secret**
+        A shared secret to validate the JWT with.
+        See :func:`moz_inapp_pay.verify.verify_sig`.
+
+    **validators**
+        A list of extra callables. Each one is passed a JSON Python dict
+        representing the JWT after it has passed all other checks.
+
+    **required_keys**
+        A list of JWT keys to validate. See
+        :func:`moz_inapp_pay.verify.verify_keys`.
     """
     issuer = _get_issuer(signed_request=signed_request)
     app_req = verify_sig(signed_request, secret, issuer=issuer)
     verify_claims(app_req, issuer=issuer)
-    verify_audience(app_req, key, issuer=issuer)
+    verify_audience(app_req, expected_aud, issuer=issuer)
     verify_keys(app_req, required_keys, issuer=issuer)
 
     for vl in validators:
