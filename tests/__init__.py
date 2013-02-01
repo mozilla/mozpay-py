@@ -29,7 +29,7 @@ class JWTtester(unittest.TestCase):
         req = {'pricePoint': 1,
                'name': 'My bands latest album',
                'description': '320kbps MP3 download, DRM free!',
-               'productdata': 'my_product_id=1234'}
+               'productData': 'my_product_id=1234'}
         if extra_req:
             req.update(extra_req)
 
