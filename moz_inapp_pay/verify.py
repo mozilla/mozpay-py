@@ -17,7 +17,6 @@ from .exc import InvalidJWT, RequestExpired
 
 def verify_jwt(signed_request, expected_aud, secret, validators=[],
                required_keys=('request.pricePoint',
-                              'request.currency',
                               'request.name',
                               'request.description',
                               'response.transactionID')):
@@ -158,19 +157,17 @@ def verify_keys(app_req, required_keys, issuer=None):
             "iss": "...",
             "aud": "...",
             "request": {
-                "price": "0.99",
-                "currency": "USD"
+                "pricePoint": 1,
             }
         }
 
     You could verify the presence of all keys and retrieve
     their values like this::
 
-        iss, aud, price, curr = verify_keys(jwt_dict,
-                                            ('iss',
-                                             'aud',
-                                             'request.pricePoint',
-                                             'request.currency'))
+        iss, aud, price = verify_keys(jwt_dict,
+                                      ('iss',
+                                       'aud',
+                                       'request.pricePoint'))
 
     """
     if not issuer:
