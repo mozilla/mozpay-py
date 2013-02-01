@@ -84,9 +84,9 @@ class TestVerify(JWTtester):
         self.verify(self.request(payload=json.dumps(payload)))
 
     @raises(InvalidJWT)
-    def test_require_price(self):
+    def test_require_price_point(self):
         payload = self.payload()
-        del payload['request']['price']
+        del payload['request']['pricePoint']
         self.verify(self.request(payload=json.dumps(payload)))
 
     @raises(InvalidJWT)

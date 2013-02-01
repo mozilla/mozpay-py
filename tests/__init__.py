@@ -26,7 +26,7 @@ class JWTtester(unittest.TestCase):
         if not exp:
             exp = iat + 3600  # expires in 1 hour
 
-        req = {'price': '0.99',
+        req = {'pricePoint': 1,
                'currency': 'USD',
                'name': 'My bands latest album',
                'description': '320kbps MP3 download, DRM free!',

@@ -16,7 +16,7 @@ from .exc import InvalidJWT, RequestExpired
 
 
 def verify_jwt(signed_request, expected_aud, secret, validators=[],
-               required_keys=('request.price',
+               required_keys=('request.pricePoint',
                               'request.currency',
                               'request.name',
                               'request.description',
@@ -169,7 +169,7 @@ def verify_keys(app_req, required_keys, issuer=None):
         iss, aud, price, curr = verify_keys(jwt_dict,
                                             ('iss',
                                              'aud',
-                                             'request.price',
+                                             'request.pricePoint',
                                              'request.currency'))
 
     """
