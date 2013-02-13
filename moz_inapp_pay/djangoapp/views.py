@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 @csrf_exempt
 def postback(request):
     try:
-        data = moz_inapp_pay.process_postback(request.read(),
+        data = moz_inapp_pay.process_postback(request.POST['notice'],
                                               settings.MOZ_APP_KEY,
                                               settings.MOZ_APP_SECRET)
     except InvalidJWT:
@@ -31,7 +31,7 @@ def postback(request):
 @csrf_exempt
 def chargeback(request):
     try:
-        data = moz_inapp_pay.process_chargeback(request.read(),
+        data = moz_inapp_pay.process_chargeback(request.POST['notice'],
                                                 settings.MOZ_APP_KEY,
                                                 settings.MOZ_APP_SECRET)
     except InvalidJWT:

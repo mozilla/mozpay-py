@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 setup(name='moz_inapp_pay',
-      version='1.0.4',
+      version='2.0.0',
       description='Utility for working with Mozilla in-app payments.',
       long_description='',
       author='Kumar McMillan',

@@ -170,6 +170,19 @@ This will run all tests in a virtualenv using the supported versions of Python.
 
 .. _tox: http://tox.testrun.org/latest/
 
+Changelog
+=========
+
+* 2.0.0
+
+  * Changed postback/chargeback from reading a JWT in the post body to reading
+    it from the ``notice`` parameter.
+    See https://bugzilla.mozilla.org/show_bug.cgi?id=838066 for details.
+
+* 1.0.4
+
+  * First working release.
+
 Indices and tables
 ==================
 
