@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = patterns('',
     url(r'^postback$', views.postback,
-        name='moz_inapp_pay.postback'),
+        name='mozpay.postback'),
     url(r'^chargeback$', views.chargeback,
-        name='moz_inapp_pay.chargeback'),
+        name='mozpay.chargeback'),
 )

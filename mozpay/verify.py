@@ -1,6 +1,6 @@
 """
 Helper functions to verify `JWT`_ (JSON Web Token) objects.
-Some are specific to Mozilla Marketplace payments, others are more generic.
+Some are specific to Firefox Marketplace payments, others are more generic.
 
 .. _`JWT`: http://openid.net/specs/draft-jones-json-web-token-07.html
 """
@@ -25,7 +25,7 @@ def verify_jwt(signed_request, expected_aud, secret, validators=[],
 
     Returns the trusted JSON data from the original request.
     When there's an error, an exception derived from
-    :class:`moz_inapp_pay.exc.InvalidJWT`
+    :class:`mozpay.exc.InvalidJWT`
     will be raised.
 
     This is an all-in-one function that does all verification you'd
@@ -39,11 +39,11 @@ def verify_jwt(signed_request, expected_aud, secret, validators=[],
 
     **expected_aud**
         The expected value for the aud (audience) of the JWT.
-        See :func:`moz_inapp_pay.verify.verify_audience`.
+        See :func:`mozpay.verify.verify_audience`.
 
     **secret**
         A shared secret to validate the JWT with.
-        See :func:`moz_inapp_pay.verify.verify_sig`.
+        See :func:`mozpay.verify.verify_sig`.
 
     **validators**
         A list of extra callables. Each one is passed a JSON Python dict
@@ -51,7 +51,7 @@ def verify_jwt(signed_request, expected_aud, secret, validators=[],
 
     **required_keys**
         A list of JWT keys to validate. See
-        :func:`moz_inapp_pay.verify.verify_keys`.
+        :func:`mozpay.verify.verify_keys`.
     """
     issuer = _get_issuer(signed_request=signed_request)
     app_req = verify_sig(signed_request, secret, issuer=issuer)
@@ -70,7 +70,7 @@ def verify_audience(app_req, expected_aud, issuer=None):
     Verify JWT aud (audience)
 
     When aud is not found or doesn't match expected_aud,
-    :class:`moz_inapp_pay.exc.InvalidJWT`
+    :class:`mozpay.exc.InvalidJWT`
     is raised.
 
     The valid audience is returned
@@ -101,9 +101,9 @@ def verify_claims(app_req, issuer=None):
       This field is *optional*, leaving it out is not an error.
 
     All exceptions are derived from
-    :class:`moz_inapp_pay.exc.InvalidJWT`.
+    :class:`mozpay.exc.InvalidJWT`.
     For expirations a
-    :class:`moz_inapp_pay.exc.RequestExpired`
+    :class:`mozpay.exc.RequestExpired`
     exception will be raised.
     """
     if not issuer:
@@ -168,6 +168,9 @@ def verify_keys(app_req, required_keys, issuer=None):
                                       ('iss',
                                        'aud',
                                        'request.pricePoint'))
+
+    Do you see how the comma separated assigned variables
+    match the keys that were extracted? The order is important.
 
     """
     if not issuer:

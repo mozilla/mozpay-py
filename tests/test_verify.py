@@ -7,8 +7,8 @@ import unittest
 import jwt
 from nose.tools import eq_, raises
 
-import moz_inapp_pay
-from moz_inapp_pay.exc import InvalidJWT, RequestExpired
+import mozpay
+from mozpay.exc import InvalidJWT, RequestExpired
 
 from . import JWTtester
 
@@ -17,7 +17,7 @@ class TestVerify(JWTtester):
 
     def setUp(self):
         super(TestVerify, self).setUp()
-        self.verifier = moz_inapp_pay.process_postback
+        self.verifier = mozpay.process_postback
 
     @raises(InvalidJWT)
     def test_unknown_secret(self):

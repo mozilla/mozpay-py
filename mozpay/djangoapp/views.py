@@ -5,8 +5,8 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-import moz_inapp_pay
-from moz_inapp_pay import InvalidJWT
+import mozpay
+from mozpay import InvalidJWT
 from . import signals
 
 log = logging.getLogger(__name__)
@@ -16,9 +16,9 @@ log = logging.getLogger(__name__)
 @csrf_exempt
 def postback(request):
     try:
-        data = moz_inapp_pay.process_postback(request.POST['notice'],
-                                              settings.MOZ_APP_KEY,
-                                              settings.MOZ_APP_SECRET)
+        data = mozpay.process_postback(request.POST['notice'],
+                                       settings.MOZ_APP_KEY,
+                                       settings.MOZ_APP_SECRET)
     except InvalidJWT:
         log.exception('in postback')
         return http.HttpResponseBadRequest()
@@ -31,9 +31,9 @@ def postback(request):
 @csrf_exempt
 def chargeback(request):
     try:
-        data = moz_inapp_pay.process_chargeback(request.POST['notice'],
-                                                settings.MOZ_APP_KEY,
-                                                settings.MOZ_APP_SECRET)
+        data = mozpay.process_chargeback(request.POST['notice'],
+                                         settings.MOZ_APP_KEY,
+                                         settings.MOZ_APP_SECRET)
     except InvalidJWT:
         log.exception('in chargeback')
         return http.HttpResponseBadRequest()

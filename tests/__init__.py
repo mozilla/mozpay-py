@@ -7,14 +7,14 @@ import unittest
 import jwt
 from nose.tools import eq_, raises
 
-import moz_inapp_pay
+import mozpay
 
 
 class JWTtester(unittest.TestCase):
 
     def setUp(self):
-        self.key = 'Application key graned by Mozilla Marketplace'
-        self.secret = 'Application secret granted by Mozilla Marketplace'
+        self.key = 'Application key graned by Firefox Marketplace'
+        self.secret = 'Application secret granted by Firefox Marketplace'
         self.verifier = None
 
     def payload(self, app_id=None, exp=None, iat=None,

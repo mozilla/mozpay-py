@@ -1,4 +1,4 @@
-A Python module to work with Mozilla Marketplace in-app payments.
+A Python module to make web payments with Mozilla's navigator.mozPay().
 
-Read the [full documentation](http://moz_inapp_pay.readthedocs.org/)
+Read the [full documentation](http://mozpay.readthedocs.org/)
 for how to install and use this library in your Python app.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# moz_inapp_pay documentation build configuration file, created by
+# mozpay documentation build configuration file, created by
 # sphinx-quickstart on Fri Jul 27 17:55:15 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'moz_inapp_pay'
+project = u'mozpay'
 copyright = u'2012, Kumar McMillan and contributors'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'moz_inapp_paydoc'
+htmlhelp_basename = 'mozpaydoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,7 +183,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'moz_inapp_pay.tex', u'moz\\_inapp\\_pay Documentation',
+  ('index', 'mozpay.tex', u'moz\\_inapp\\_pay Documentation',
    u'Kumar McMillan and contributors', 'manual'),
 ]
 
@@ -213,7 +213,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'moz_inapp_pay', u'moz_inapp_pay Documentation',
+    ('index', 'mozpay', u'mozpay Documentation',
      [u'Kumar McMillan and contributors'], 1)
 ]
 
@@ -227,8 +227,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'moz_inapp_pay', u'moz_inapp_pay Documentation',
-   u'Kumar McMillan and contributors', 'moz_inapp_pay', 'One line description of project.',
+  ('index', 'mozpay', u'mozpay Documentation',
+   u'Kumar McMillan and contributors', 'mozpay', 'One line description of project.',
    'Miscellaneous'),
 ]
 

@@ -2,8 +2,8 @@ import json
 
 from nose.tools import eq_, raises
 
-import moz_inapp_pay
-from moz_inapp_pay import InvalidJWT
+import mozpay
+from mozpay import InvalidJWT
 
 from . import JWTtester
 
@@ -16,7 +16,7 @@ class TestCallbacks(JWTtester):
     def test_postback(self):
         payload = self.payload()
         data = self.verify(self.request(payload=json.dumps(payload)),
-                           verifier=moz_inapp_pay.process_postback)
+                           verifier=mozpay.process_postback)
         eq_(data['response']['transactionID'],
             payload['response']['transactionID'])
 
@@ -24,7 +24,7 @@ class TestCallbacks(JWTtester):
         payload = self.payload(typ='mozilla/chargeback/pay/v1',
                                extra_res={'reason': 'refund'})
         data = self.verify(self.request(payload=json.dumps(payload)),
-                           verifier=moz_inapp_pay.process_chargeback)
+                           verifier=mozpay.process_chargeback)
         eq_(data['response']['transactionID'],
             payload['response']['transactionID'])
 
@@ -32,4 +32,4 @@ class TestCallbacks(JWTtester):
     def test_chargeback_no_reason(self):
         payload = self.payload(typ='mozilla/chargeback/pay/v1')
         data = self.verify(self.request(payload=json.dumps(payload)),
-                           verifier=moz_inapp_pay.process_chargeback)
+                           verifier=mozpay.process_chargeback)

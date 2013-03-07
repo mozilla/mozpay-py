@@ -3,14 +3,14 @@ import os
 from setuptools import setup, find_packages
 
 
-setup(name='moz_inapp_pay',
+setup(name='mozpay',
       version='2.0.0',
-      description='Utility for working with Mozilla in-app payments.',
+      description="Make web payments with Mozilla's navigator.mozPay().",
       long_description='',
       author='Kumar McMillan',
       author_email='kumar.mcmillan@gmail.com',
       license='MPL 2.0 (Mozilla Public License)',
-      url='https://github.com/kumar303/moz_inapp_pay',
+      url='https://github.com/mozilla/mozpay-py',
       include_package_data=True,
       classifiers=[],
       packages=find_packages(exclude=['tests']),
