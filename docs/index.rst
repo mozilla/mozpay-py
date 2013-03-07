@@ -174,11 +174,6 @@ To build the documentation, create a virtualenv then run::
 
     pip install -r docs/requirements.txt
 
-The docs will extract some docstrings from mozpay, so install it in your
-virtualenv::
-
-    python setup.py develop
-
 Build the docs from the root like this::
 
     make -C docs/ html

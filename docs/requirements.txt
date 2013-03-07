@@ -1,1 +1,4 @@
 Sphinx>=1.1.3
+
+# Install local mozpay for API docs:
+.
