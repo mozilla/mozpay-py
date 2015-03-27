@@ -19,7 +19,8 @@ def verify_jwt(signed_request, expected_aud, secret, validators=[],
                required_keys=('request.pricePoint',
                               'request.name',
                               'request.description',
-                              'response.transactionID')):
+                              'response.transactionID'),
+               algorithms=None):
     """
     Verifies a postback/chargeback JWT.
 
@@ -52,9 +53,17 @@ def verify_jwt(signed_request, expected_aud, secret, validators=[],
     **required_keys**
         A list of JWT keys to validate. See
         :func:`mozpay.verify.verify_keys`.
+
+    **algorithms**
+        A list of valid JWT algorithms to accept.
+        By default this will only include HS256 because that's
+        what the Firefox Marketplace uses.
     """
+    if not algorithms:
+        algorithms = ['HS256']
     issuer = _get_issuer(signed_request=signed_request)
-    app_req = verify_sig(signed_request, secret, issuer=issuer)
+    app_req = verify_sig(signed_request, secret, issuer=issuer,
+                         algorithms=algorithms)
     verify_claims(app_req, issuer=issuer)
     verify_audience(app_req, expected_aud, issuer=issuer)
     verify_keys(app_req, required_keys, issuer=issuer)
@@ -191,7 +200,7 @@ def verify_keys(app_req, required_keys, issuer=None):
     return key_vals
 
 
-def verify_sig(signed_request, secret, issuer=None):
+def verify_sig(signed_request, secret, issuer=None, algorithms=None):
     """
     Verify the JWT signature.
 
@@ -205,7 +214,8 @@ def verify_sig(signed_request, secret, issuer=None):
 
     # Check signature.
     try:
-        jwt.decode(signed_request, secret, verify=True)
+        jwt.decode(signed_request, secret, verify=True,
+                   algorithms=algorithms)
     except jwt.DecodeError, exc:
         _re_raise_as(InvalidJWT,
                      'Signature verification failed: %s' % exc,

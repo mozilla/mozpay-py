@@ -13,8 +13,8 @@ import mozpay
 class JWTtester(unittest.TestCase):
 
     def setUp(self):
-        self.key = 'Application key graned by Firefox Marketplace'
-        self.secret = 'Application secret granted by Firefox Marketplace'
+        self.key = 'FIREFOX_MARKETPLACE_KEY'
+        self.secret = 'FIREFOX_MARKETPLACE_SECRET'
         self.verifier = None
 
     def payload(self, app_id=None, exp=None, iat=None,
@@ -47,16 +47,21 @@ class JWTtester(unittest.TestCase):
             'response': res,
         }
 
-    def request(self, app_secret=None, payload=None, **payload_kw):
+    def request(self, app_secret=None, payload=None, encode_kwargs=None,
+                **payload_kw):
         if not app_secret:
             app_secret = self.secret
         if not payload:
-            payload = json.dumps(self.payload(**payload_kw))
-        encoded = jwt.encode(payload, app_secret, algorithm='HS256')
+            payload = self.payload(**payload_kw)
+        if not encode_kwargs:
+            encode_kwargs = {}
+
+        encode_kwargs.setdefault('algorithm', 'HS256')
+        encoded = jwt.encode(payload, app_secret, **encode_kwargs)
         return unicode(encoded)  # e.g. django always passes unicode
 
     def verify(self, request=None, update=None, update_request=None,
-               verifier=None):
+               verifier=None, verify_kwargs=None):
         if not verifier:
             verifier = self.verifier
         if not request:
@@ -66,4 +71,6 @@ class JWTtester(unittest.TestCase):
             if update:
                 payload.update(update)
             request = self.request(payload=json.dumps(payload))
-        return verifier(request, self.key, self.secret)
+        if not verify_kwargs:
+            verify_kwargs = {}
+        return verifier(request, self.key, self.secret, **verify_kwargs)

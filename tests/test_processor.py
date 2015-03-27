@@ -23,7 +23,7 @@ class TestCallbacks(JWTtester):
     def test_chargeback(self):
         payload = self.payload(typ='mozilla/chargeback/pay/v1',
                                extra_res={'reason': 'refund'})
-        data = self.verify(self.request(payload=json.dumps(payload)),
+        data = self.verify(self.request(payload=payload),
                            verifier=mozpay.process_chargeback)
         eq_(data['response']['transactionID'],
             payload['response']['transactionID'])

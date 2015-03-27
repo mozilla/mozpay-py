@@ -187,6 +187,12 @@ Et voila::
 Changelog
 =========
 
+* 2.1.0
+
+  * Added ``algorithms`` list to verification functions to adjust
+    what JWT algorithms are accepted.
+    **By default only HS256 is accepted now**
+
 * 2.0.0
 
   * Changed postback/chargeback from reading a JWT in the post body to reading

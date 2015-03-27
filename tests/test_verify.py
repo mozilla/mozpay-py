@@ -132,3 +132,14 @@ class TestVerify(JWTtester):
     @raises(InvalidJWT)
     def test_malformed_jwt(self):
         self.verify(self.request() + 'x')
+
+    @raises(InvalidJWT)
+    def test_unsupported_algorithm(self):
+        # Configure mozpay to only accept the HS384 algorithm.
+        self.verify(self.request(encode_kwargs={'algorithm': 'HS256'}),
+                    verify_kwargs={'algorithms': ['HS384']})
+
+    @raises(InvalidJWT)
+    def test_hs256_is_default_algorithm(self):
+        # By default, only HS256 JWTs are accepted.
+        self.verify(self.request(encode_kwargs={'algorithm': 'HS384'}))
