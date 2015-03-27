@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 setup(name='mozpay',
-      version='2.0.0',
+      version='2.1.0',
       description="Make web payments with Mozilla's navigator.mozPay().",
       long_description='',
       author='Kumar McMillan',

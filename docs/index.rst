@@ -144,8 +144,7 @@ JWT Verification API
 ====================
 
 .. automodule:: mozpay.verify
-    :members: verify_jwt, verify_sig, verify_claims, verify_audience,
-              verify_keys
+    :members: verify_jwt, verify_sig, verify_claims, verify_keys
 
 Exceptions
 ==========
@@ -186,6 +185,12 @@ Et voila::
 
 Changelog
 =========
+
+* 2.1.0
+
+  * Added ``algorithms`` list to verification functions to adjust
+    what JWT algorithms are accepted.
+    **By default only HS256 is accepted now**
 
 * 2.0.0
 

@@ -4,11 +4,8 @@ Some are specific to Firefox Marketplace payments, others are more generic.
 
 .. _`JWT`: http://openid.net/specs/draft-jones-json-web-token-07.html
 """
-import calendar
-from datetime import datetime
 import json
 import sys
-import time
 
 import jwt
 
@@ -19,7 +16,8 @@ def verify_jwt(signed_request, expected_aud, secret, validators=[],
                required_keys=('request.pricePoint',
                               'request.name',
                               'request.description',
-                              'response.transactionID')):
+                              'response.transactionID'),
+               algorithms=None):
     """
     Verifies a postback/chargeback JWT.
 
@@ -52,38 +50,28 @@ def verify_jwt(signed_request, expected_aud, secret, validators=[],
     **required_keys**
         A list of JWT keys to validate. See
         :func:`mozpay.verify.verify_keys`.
+
+    **algorithms**
+        A list of valid JWT algorithms to accept.
+        By default this will only include HS256 because that's
+        what the Firefox Marketplace uses.
     """
+    if not algorithms:
+        algorithms = ['HS256']
     issuer = _get_issuer(signed_request=signed_request)
-    app_req = verify_sig(signed_request, secret, issuer=issuer)
+    app_req = verify_sig(signed_request, secret, issuer=issuer,
+                         algorithms=algorithms, expected_aud=expected_aud)
+
+    # I think this call can be removed after
+    # https://github.com/jpadilla/pyjwt/issues/121
     verify_claims(app_req, issuer=issuer)
-    verify_audience(app_req, expected_aud, issuer=issuer)
+
     verify_keys(app_req, required_keys, issuer=issuer)
 
     for vl in validators:
         vl(app_req)
 
     return app_req
-
-
-def verify_audience(app_req, expected_aud, issuer=None):
-    """
-    Verify JWT aud (audience)
-
-    When aud is not found or doesn't match expected_aud,
-    :class:`mozpay.exc.InvalidJWT`
-    is raised.
-
-    The valid audience is returned
-    """
-    if not issuer:
-        issuer = _get_issuer(app_req=app_req)
-
-    audience, = verify_keys(app_req, ['aud'])
-    if audience != expected_aud:
-        raise InvalidJWT('JWT aud (audience) must be set to %r; '
-                         'got: %r' % (expected_aud, audience),
-                         issuer=issuer)
-    return audience
 
 
 def verify_claims(app_req, issuer=None):
@@ -97,8 +85,6 @@ def verify_claims(app_req, issuer=None):
     - iat: issued at time. If JWT was issued more than an hour ago it is
       rejected.
     - exp: expiration time.
-    - nbf: not before time. This is padded with 5 minutes for clock skew.
-      This field is *optional*, leaving it out is not an error.
 
     All exceptions are derived from
     :class:`mozpay.exc.InvalidJWT`.
@@ -109,38 +95,13 @@ def verify_claims(app_req, issuer=None):
     if not issuer:
         issuer = _get_issuer(app_req=app_req)
     try:
-        expires = float(str(app_req.get('exp')))
-        issued = float(str(app_req.get('iat')))
+        float(str(app_req.get('exp')))
+        float(str(app_req.get('iat')))
     except ValueError:
         _re_raise_as(InvalidJWT,
                      'JWT had an invalid exp (%r) or iat (%r) '
                      % (app_req.get('exp'), app_req.get('iat')),
                      issuer=issuer)
-    now = calendar.timegm(time.gmtime())
-    if expires < now:
-        raise RequestExpired('JWT expired: %s UTC < %s UTC '
-                             '(issued at %s UTC)'
-                             % (datetime.utcfromtimestamp(expires),
-                                datetime.utcfromtimestamp(now),
-                                datetime.utcfromtimestamp(issued)),
-                             issuer=issuer)
-    if issued < (now - 3600):  # issued more than an hour ago
-        raise RequestExpired('JWT iat expired: %s UTC < %s UTC '
-                             % (datetime.utcfromtimestamp(issued),
-                                datetime.utcfromtimestamp(now)),
-                             issuer=issuer)
-    try:
-        not_before = float(str(app_req.get('nbf')))
-    except ValueError:
-        app_req['nbf'] = None  # this field is optional
-    else:
-        about_now = now + 300  # pad 5 minutes for clock skew
-        if not_before >= about_now:
-            raise InvalidJWT('JWT cannot be processed before '
-                             '%s UTC (nbf must be < %s UTC)'
-                             % (datetime.utcfromtimestamp(not_before),
-                                datetime.utcfromtimestamp(about_now)),
-                             issuer=issuer)
 
 
 def verify_keys(app_req, required_keys, issuer=None):
@@ -191,7 +152,8 @@ def verify_keys(app_req, required_keys, issuer=None):
     return key_vals
 
 
-def verify_sig(signed_request, secret, issuer=None):
+def verify_sig(signed_request, secret, issuer=None, algorithms=None,
+               expected_aud=None):
     """
     Verify the JWT signature.
 
@@ -205,8 +167,11 @@ def verify_sig(signed_request, secret, issuer=None):
 
     # Check signature.
     try:
-        jwt.decode(signed_request, secret, verify=True)
-    except jwt.DecodeError, exc:
+        jwt.decode(signed_request, secret, verify=True,
+                   algorithms=algorithms, audience=expected_aud)
+    except jwt.ExpiredSignatureError, exc:
+        _re_raise_as(RequestExpired, '%s' % exc, issuer=issuer)
+    except jwt.InvalidTokenError, exc:
         _re_raise_as(InvalidJWT,
                      'Signature verification failed: %s' % exc,
                      issuer=issuer)

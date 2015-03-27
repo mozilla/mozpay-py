@@ -1,11 +1,8 @@
 import calendar
 from datetime import datetime, timedelta
-import json
 import time
-import unittest
 
-import jwt
-from nose.tools import eq_, raises
+from nose.tools import raises
 
 import mozpay
 from mozpay.exc import InvalidJWT, RequestExpired
@@ -31,11 +28,6 @@ class TestVerify(JWTtester):
     def test_non_ascii_jwt(self):
         self.verify(u'Ivan Krsti\u0107 is in your JWT')
 
-    @raises(InvalidJWT)
-    def test_mangled_json(self):
-        encoded = self.request(payload='[\\}()')  # json syntax error
-        self.verify(encoded)
-
     @raises(RequestExpired)
     def test_expired(self):
         now = calendar.timegm(time.gmtime())
@@ -56,7 +48,7 @@ class TestVerify(JWTtester):
     def test_invalid_expiry_non_ascii(self):
         self.verify(update={'exp': u'Ivan Krsti\u0107 is in your JWT'})
 
-    @raises(InvalidJWT)
+    @raises(RequestExpired)
     def test_none_expiry(self):
         self.verify(update={'exp': None})
 
@@ -65,59 +57,51 @@ class TestVerify(JWTtester):
         self.verify(update={'iat': u'Ivan Krsti\u0107 is in your JWT'})
 
     @raises(InvalidJWT)
-    def test_none_iat(self):
-        self.verify(update={'iat': None})
-
-    @raises(InvalidJWT)
     def test_not_before(self):
         nbf = calendar.timegm(time.gmtime()) + 310  # 5:10 in the future
         self.verify(update={'nbf': nbf})
-
-    def test_ignore_invalid_nbf(self):
-        data = self.verify(update={'nbf': '<garbage>'})
-        eq_(data['nbf'], None)
 
     @raises(InvalidJWT)
     def test_require_iss(self):
         payload = self.payload()
         del payload['iss']
-        self.verify(self.request(payload=json.dumps(payload)))
+        self.verify(self.request(payload=payload))
 
     @raises(InvalidJWT)
     def test_require_price_point(self):
         payload = self.payload()
         del payload['request']['pricePoint']
-        self.verify(self.request(payload=json.dumps(payload)))
+        self.verify(self.request(payload=payload))
 
     @raises(InvalidJWT)
     def test_require_name(self):
         payload = self.payload()
         del payload['request']['name']
-        self.verify(self.request(payload=json.dumps(payload)))
+        self.verify(self.request(payload=payload))
 
     @raises(InvalidJWT)
     def test_require_description(self):
         payload = self.payload()
         del payload['request']['description']
-        self.verify(self.request(payload=json.dumps(payload)))
+        self.verify(self.request(payload=payload))
 
     @raises(InvalidJWT)
     def test_require_request(self):
         payload = self.payload()
         del payload['request']
-        self.verify(self.request(payload=json.dumps(payload)))
+        self.verify(self.request(payload=payload))
 
     @raises(InvalidJWT)
     def test_require_response(self):
         payload = self.payload()
         del payload['response']
-        self.verify(self.request(payload=json.dumps(payload)))
+        self.verify(self.request(payload=payload))
 
     @raises(InvalidJWT)
     def test_require_transaction_id(self):
         payload = self.payload()
         del payload['response']['transactionID']
-        self.verify(self.request(payload=json.dumps(payload)))
+        self.verify(self.request(payload=payload))
 
     @raises(InvalidJWT)
     def test_invalid_audience(self):
@@ -127,8 +111,19 @@ class TestVerify(JWTtester):
     def test_missing_audience(self):
         payload = self.payload()
         del payload['aud']
-        self.verify(self.request(payload=json.dumps(payload)))
+        self.verify(self.request(payload=payload))
 
     @raises(InvalidJWT)
     def test_malformed_jwt(self):
         self.verify(self.request() + 'x')
+
+    @raises(InvalidJWT)
+    def test_unsupported_algorithm(self):
+        # Configure mozpay to only accept the HS384 algorithm.
+        self.verify(self.request(encode_kwargs={'algorithm': 'HS256'}),
+                    verify_kwargs={'algorithms': ['HS384']})
+
+    @raises(InvalidJWT)
+    def test_hs256_is_default_algorithm(self):
+        # By default, only HS256 JWTs are accepted.
+        self.verify(self.request(encode_kwargs={'algorithm': 'HS384'}))
