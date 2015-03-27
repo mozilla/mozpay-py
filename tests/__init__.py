@@ -1,13 +1,8 @@
 import calendar
-from datetime import datetime, timedelta
-import json
 import time
 import unittest
 
 import jwt
-from nose.tools import eq_, raises
-
-import mozpay
 
 
 class JWTtester(unittest.TestCase):
@@ -70,7 +65,7 @@ class JWTtester(unittest.TestCase):
                 payload['request'].update(update_request)
             if update:
                 payload.update(update)
-            request = self.request(payload=json.dumps(payload))
+            request = self.request(payload=payload)
         if not verify_kwargs:
             verify_kwargs = {}
         return verifier(request, self.key, self.secret, **verify_kwargs)

@@ -144,8 +144,7 @@ JWT Verification API
 ====================
 
 .. automodule:: mozpay.verify
-    :members: verify_jwt, verify_sig, verify_claims, verify_audience,
-              verify_keys
+    :members: verify_jwt, verify_sig, verify_claims, verify_keys
 
 Exceptions
 ==========

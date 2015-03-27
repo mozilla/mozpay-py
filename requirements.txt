@@ -1,2 +1,2 @@
-PyJWT-mozilla>=0.1.5
+PyJWT>=1.0.1
 M2Crypto>=0.2.0
