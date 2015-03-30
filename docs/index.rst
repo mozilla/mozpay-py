@@ -190,7 +190,10 @@ Changelog
 
   * Added ``algorithms`` list to verification functions to adjust
     what JWT algorithms are accepted.
-    **By default only HS256 is accepted now**
+    **By default only HS256 is accepted now**.
+  * Upgraded `PyJWT <https://github.com/jpadilla/pyjwt>`_ to the latest version.
+  * Removed M2Crypto as a dependency because that is no longer needed
+    and it wasn't actually used for our signing purposes anyway.
 
 * 2.0.0
 
